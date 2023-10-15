@@ -11,7 +11,7 @@ const profileSchema = new Schema({
     type: String,
     required: true
   },
-  authorazationLevel: {
+  authorizationLevel: {
     type: String,
     required: true
   },
