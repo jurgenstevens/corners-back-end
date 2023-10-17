@@ -1,4 +1,4 @@
-import { Business } from "../models/business";
+import { Business } from "../models/business.js";
 
 async function create(req, res) {
   try{
@@ -22,7 +22,8 @@ async function create(req, res) {
         }
       ])
       .then(popBusiness => {
-        console.log(popBusiness)
+        // console.log(popBusiness)
+        res.json(popBusiness)
       })
     })
   } catch (err) {
