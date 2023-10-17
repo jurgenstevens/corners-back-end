@@ -22,7 +22,7 @@ async function create(req, res) {
         }
       ])
       .then(popBusiness => {
-        res.json(popBusiness)
+        console.log(popBusiness)
       })
     })
   } catch (err) {
