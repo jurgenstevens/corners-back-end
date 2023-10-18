@@ -4,7 +4,7 @@ import * as businessCtrl from '../controllers/businesses.js'
 
 const router = Router()
 
-router.post("/register", checkAuth, businessCtrl.create)
+router.post("/register", businessCtrl.create)
 
 
 export { router }
