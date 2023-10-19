@@ -35,10 +35,26 @@ async function create(req, res) {
   }
 }
 
+async function deleteBusiness(req, res) {
+  try {
+    Business.findById(req.params.id)
+    .then(business => {
+      if (business.businessOwnerName._id.equals(req.user.profile)) {
+        Business.findByIdAndDelete(business._id)
+        .then(deletedBusiness => {
+          res.json(deletedBusiness)
+        })
+      }
+    })
+  } catch (err) {
+    console.log(err)
+    res.status(500).json(err)
+  }
+}
 
 
 
 
 
 
-export { create }
+export { create,  }
