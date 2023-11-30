@@ -19,8 +19,12 @@ const profileSchema = new Schema({
     type: String,
     required: true
   },
-  myStores: [{type: Schema.Types.ObjectId, ref: 'Business'}],
-  productWishlist: [{type: Schema.Types.ObjectId, ref:'Products'}],
+  myStores: [
+    { type: Schema.Types.ObjectId, ref: 'Business' }
+  ],
+  productWishlist: [
+    { type: Schema.Types.ObjectId, ref:'Products' }
+  ],
   rating: {
     type: Number,
     required: false

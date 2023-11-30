@@ -11,6 +11,10 @@ async function index(req, res) {
   }
 }
 
+async function approveStore(req, res){
+
+}
+
 async function addPhoto(req, res) {
   try {
     const imageFile = req.files.photo.path
@@ -30,4 +34,4 @@ async function addPhoto(req, res) {
   }
 }
 
-export { index, addPhoto }
+export { index, addPhoto, approveStore }
