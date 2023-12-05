@@ -19,4 +19,8 @@ function checkAuth(req, res, next) {
   return req.user ? next() : res.status(401).json({ err: 'Not Authorized' })
 }
 
-export { decodeUserFromToken, checkAuth }
+function checkAdmin(req, res, next) {
+
+}
+
+export { decodeUserFromToken, checkAuth, checkAdmin }
