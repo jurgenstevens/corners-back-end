@@ -57,4 +57,7 @@ async function deleteBusiness(req, res) {
 
 
 
-export { create,  }
+export { 
+  create,
+  deleteBusiness as delete
+  }
