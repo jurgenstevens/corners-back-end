@@ -17,6 +17,7 @@ async function create(req, res) {
   try{
     //Skipping auth for now just want the functionality to work
     // console.log(req.user)
+    req.body.businessOwnerName = req.user.profile
     Business.create(req.body)
     .then(business => {
       Business.findById(business._id)
@@ -56,6 +57,7 @@ async function deleteBusiness(req, res) {
         Business.findByIdAndDelete(business._id)
         .then(deletedBusiness => {
           res.json(deletedBusiness)
+          console.log("this was deleted", deletedBusiness)
         })
       }
     })
@@ -64,11 +66,6 @@ async function deleteBusiness(req, res) {
     res.status(500).json(err)
   }
 }
-
-
-
-
-
 
 export { 
   create,

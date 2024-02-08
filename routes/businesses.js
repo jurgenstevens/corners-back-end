@@ -7,6 +7,7 @@ const router = Router()
 router.use(decodeUserFromToken)
 router.get("/", businessCtrl.index)
 router.post("/register", checkAuth, businessCtrl.create)
+router.delete("/:id", checkAuth, businessCtrl.delete)
 
 
 
