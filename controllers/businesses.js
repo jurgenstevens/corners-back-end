@@ -37,9 +37,14 @@ async function show(req, res) {
 
 async function edit(req, res) {
   try{
-    Business.findByIdAndUpdate(req.params.id, req.body, {new: true})
-    .then(updatedBusiness => {
-      res.json(updatedBusiness)
+    Business.findById(req.params.id)
+    .then(business => {
+      if (business.businessOwnerName._id.equals(req.user.profile)) {
+        Business.findByIdAndUpdate(req.params.id, req.body, {new: true})
+        .then(updatedBusiness => {
+          res.json(updatedBusiness)
+        })
+      }
     })
   } catch {
     console.log(err)
