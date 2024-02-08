@@ -6,6 +6,7 @@ const router = Router()
 // this was what was missing vvv
 router.use(decodeUserFromToken)
 router.get("/", businessCtrl.index)
+router.get("/:id", businessCtrl.show)
 router.post("/register", checkAuth, businessCtrl.create)
 router.delete("/:id", checkAuth, businessCtrl.delete)
 

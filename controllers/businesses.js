@@ -16,10 +16,15 @@ async function index(req, res) {
 
 async function show(req, res) {
   try{
-    Business.findById(req.body)
-    .populate({
+    Business.findById(req.params.id)
+    .populate([
+      {
       path: "businessOwnerName"
-    })
+      },
+      {
+        path: "businessOwnerName.fullName"
+      }
+    ])
     .then(business => 
       res.json(business)
     )
@@ -85,6 +90,7 @@ async function deleteBusiness(req, res) {
 
 export { 
   create,
+  show,
   index,
   deleteBusiness as delete
   }
