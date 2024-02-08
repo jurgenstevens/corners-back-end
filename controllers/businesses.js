@@ -34,6 +34,19 @@ async function show(req, res) {
   }
 }
 
+
+async function edit(req, res) {
+  try{
+    Business.findByIdAndUpdate(req.params.id, req.body, {new: true})
+    .then(updatedBusiness => {
+      res.json(updatedBusiness)
+    })
+  } catch {
+    console.log(err)
+    res.status(500).json(err)
+  }
+}
+
 async function create(req, res) {
   try{
     //Skipping auth for now just want the functionality to work
