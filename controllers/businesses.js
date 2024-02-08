@@ -110,5 +110,6 @@ export {
   create,
   show,
   index,
+  edit,
   deleteBusiness as delete
   }
