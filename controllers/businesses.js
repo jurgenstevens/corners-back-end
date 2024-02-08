@@ -1,5 +1,18 @@
 import { Business } from "../models/business.js";
 
+
+async function index(req, res) {
+  try{
+    Business.find({})
+    .then(stores => 
+    res.json(stores)  
+    )
+  } catch (err) {
+    console.log(err)
+    res.status(500).json(err)
+  }
+}
+
 async function create(req, res) {
   try{
     //Skipping auth for now just want the functionality to work
@@ -59,5 +72,6 @@ async function deleteBusiness(req, res) {
 
 export { 
   create,
+  index,
   deleteBusiness as delete
   }
