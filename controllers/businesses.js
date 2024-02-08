@@ -13,6 +13,22 @@ async function index(req, res) {
   }
 }
 
+
+async function show(req, res) {
+  try{
+    Business.findById(req.body)
+    .populate({
+      path: "businessOwnerName"
+    })
+    .then(business => 
+      res.json(business)
+    )
+  } catch (err) {
+    console.log(err)
+    res.status(500).json(err)
+  }
+}
+
 async function create(req, res) {
   try{
     //Skipping auth for now just want the functionality to work
@@ -57,7 +73,7 @@ async function deleteBusiness(req, res) {
         Business.findByIdAndDelete(business._id)
         .then(deletedBusiness => {
           res.json(deletedBusiness)
-          console.log("this was deleted", deletedBusiness)
+          console.log("this was deleted:", deletedBusiness)
         })
       }
     })
