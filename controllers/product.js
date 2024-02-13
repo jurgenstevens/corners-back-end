@@ -1,5 +1,5 @@
 
-import { Product } from "../models/product"
+import { Product } from "../models/product.js"
 
 async function index(req, res) {
   try{
