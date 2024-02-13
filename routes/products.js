@@ -7,6 +7,7 @@ const router = Router()
 router.use(decodeUserFromToken)
 
 router.get("/", productsCtrl.index)
+router.post("/create-new", productsCtrl.create)
 
 
 export { router }
