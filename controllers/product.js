@@ -14,7 +14,21 @@ async function index(req, res) {
   }
 }
 
+async function create(req, res) {
+  try{
+    Product.create(req.body)
+    .then(product => [
+      res.json(product)
+    ])
+    
+  } catch(err) {
+    console.log(err)
+    res.status(500).json(err)
+  }
+}
+
 
 export {
-  index
+  index,
+  create
 }
