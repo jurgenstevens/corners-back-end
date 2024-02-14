@@ -130,11 +130,28 @@ async function addProduct(req, res) {
   }
 }
 
+async function clearProducts(req, res) {
+  try{
+    const business = await Business.findById(req.params.id)
+
+    business.productsOnSale = []
+
+    Business.findByIdAndUpdate(req.params.id, business, {new: true})
+    .then(updatedBusiness => {
+      res.json(updatedBusiness)
+    })
+  } catch (err) {
+    console.log(err)
+    res.status(500).json(err)
+  }
+}
+
 export { 
   create,
   show,
   index,
   edit,
   deleteBusiness as delete,
-  addProduct
+  addProduct,
+  clearProducts
   }
