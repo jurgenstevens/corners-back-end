@@ -24,6 +24,8 @@ async function show(req, res) {
       },
       {
         path: "businessOwnerName.fullName"
+      },{
+        path: "productsOnSale"
       }
     ])
     .then(business => 
@@ -74,9 +76,10 @@ async function create(req, res) {
         //   path: "recentlyAddedProducts"
         // },{
         //   path: "rejectedProducts"
-        // },{
-        //   path: "productsOnSale"
         // }
+        ,{
+          path: "productsOnSale"
+        }
       ])
       .then(popBusiness => {
         // console.log(popBusiness)
