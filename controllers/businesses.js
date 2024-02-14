@@ -146,7 +146,28 @@ async function clearProducts(req, res) {
   } catch (err) {
     console.log(err)
     res.status(500).json(err)
-  }
+  } 
+}
+
+async function editStock(req, res) {
+  try{
+    const business = await Business.findById(req.params.id)
+    const product = await Product.findById(req.body.itemId)
+
+    if (!business || !product) {
+      return res.status(404).json({ message: 'Not found' })
+    }
+
+    Product.findByIdAndUpdate(req.body.itemId, { count: req.body.count }, { new: true })
+    .then(counted => {
+      res.json(counted)
+    })
+
+    
+  } catch (err) {
+    console.log(err)
+    res.status(500).json(err)
+  } 
 }
 
 export { 
@@ -156,5 +177,6 @@ export {
   edit,
   deleteBusiness as delete,
   addProduct,
-  clearProducts
+  clearProducts,
+  editStock
   }
