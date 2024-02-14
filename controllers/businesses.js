@@ -109,12 +109,19 @@ async function deleteBusiness(req, res) {
 
 async function addProduct(req, res) {
   try{
-    Business.findById(req.params.id)
-    .then(business => {
-      Product.findById(req.body)
-      .then(product => {
-        business.productsOnSale.push(product)
-        console.log(business)
+    const business = await Business.findById(req.params.id)
+    const product = await Product.findById(req.body)
+
+    if (!business || !product) {
+      return res.status(404).json({ message: 'Not found' })
+    }
+
+    business.productsOnSale.push(product)
+    Business.findByIdAndUpdate(req.params.id, business, {new: true})
+    .then(updatedBusiness => {
+      updatedBusiness.populate("productsOnSale")
+      .then(popBusiness => {
+        res.json(popBusiness)
       })
     })
   } catch (err) {
@@ -128,5 +135,6 @@ export {
   show,
   index,
   edit,
-  deleteBusiness as delete
+  deleteBusiness as delete,
+  addProduct
   }

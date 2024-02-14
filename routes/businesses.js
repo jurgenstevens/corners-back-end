@@ -10,6 +10,7 @@ router.get("/:id", businessCtrl.show)
 router.post("/register", checkAuth, businessCtrl.create)
 router.put("/edit/:id", checkAuth, businessCtrl.edit)
 router.delete("/:id", checkAuth, businessCtrl.delete)
+router.put("/add-product/:id", checkAuth, businessCtrl.addProduct)
 
 
 
