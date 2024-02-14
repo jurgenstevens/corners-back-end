@@ -1,4 +1,5 @@
 import { Business } from "../models/business.js";
+import { Product } from "../models/product.js";
 
 
 async function index(req, res) {
@@ -106,7 +107,21 @@ async function deleteBusiness(req, res) {
   }
 }
 
-
+async function addProduct(req, res) {
+  try{
+    Business.findById(req.params.id)
+    .then(business => {
+      Product.findById(req.body)
+      .then(product => {
+        business.productsOnSale.push(product)
+        console.log(business)
+      })
+    })
+  } catch (err) {
+    console.log(err)
+    res.status(500).json(err)
+  }
+}
 
 export { 
   create,
