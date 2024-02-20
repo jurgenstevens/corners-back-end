@@ -20,13 +20,17 @@ async function show(req, res) {
     Business.findById(req.params.id)
     .populate([
       {
-      path: "businessOwnerName"
+        path: "businessOwnerName"
+      },{
+        path: "businessOwnerName.fullName"
       },
       {
-        path: "businessOwnerName.fullName"
-      },{
-        path: "productsOnSale"
-      }
+        path: "productsOnSale.products",
+        populate: {
+          path:"products",
+          model: "Product"
+        }
+      },
     ])
     .then(business => 
       res.json(business)
@@ -114,15 +118,25 @@ async function addProduct(req, res) {
   try{
     const business = await Business.findById(req.params.id)
     const product = await Product.findById(req.body)
+    console.log(product)
 
     if (!business || !product) {
       return res.status(404).json({ message: 'Not found' })
     }
 
     business.productsOnSale.push(product)
+    console.log(business)
     Business.findByIdAndUpdate(req.params.id, business, {new: true})
     .then(updatedBusiness => {
-      updatedBusiness.populate("productsOnSale")
+      updatedBusiness.populate([
+        {
+          path: "productsOnSale"
+        },{
+          path: "productsOnSale.products"
+        },{
+          path: "productsOnSale.products.productName"
+        }
+      ])
       .then(popBusiness => {
         res.json(popBusiness)
       })
