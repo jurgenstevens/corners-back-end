@@ -17,14 +17,14 @@ async function index(req, res) {
 
 async function show(req, res) {
   try{
-    const business = await Business.findById(req.params.id)
+    Business.findById(req.params.id)
     .populate([
       {
-        path: "businessOwnerName"
+        path: "businessOwnerName",
+        populate: {
+          path: "fullName"
+        }
       },{
-        path: "businessOwnerName.fullName"
-      },
-      {
         path: "productsOnSale",
         populate: {
           path:"_id",
