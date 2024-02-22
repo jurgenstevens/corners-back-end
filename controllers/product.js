@@ -1,4 +1,3 @@
-
 import { Product } from "../models/product.js"
 
 async function index(req, res) {
@@ -26,7 +25,6 @@ async function create(req, res) {
     res.status(500).json(err)
   }
 }
-
 
 
 

@@ -132,9 +132,13 @@ async function addProduct(req, res) {
         {
           path: "productsOnSale"
         },{
-          path: "productsOnSale.products"
-        },{
-          path: "productsOnSale.products.productName"
+          path: "productsOnSale",
+          populate : {
+            path: "products",
+            populate: {
+              path: "productName"
+            }
+          }
         }
       ])
       .then(popBusiness => {
