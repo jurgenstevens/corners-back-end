@@ -170,18 +170,26 @@ async function clearProducts(req, res) {
 async function editStock(req, res) {
   try{
     const business = await Business.findById(req.params.id)
-    const product = await Product.findById(req.body.itemId)
-
-    if (!business || !product) {
-      return res.status(404).json({ message: 'Not found' })
+    if (!business) {
+      return res.status(404).json({ message: 'Business not found' })
     }
-
-    Product.findByIdAndUpdate(req.body.itemId, { count: req.body.count }, { new: true })
-    .then(counted => {
-      res.json(counted)
+    const product = await Product.findByIdAndUpdate(req.body.itemId, { count: req.body.count }, { new: true })
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' })
+    }
+    const productIndex = business.productsOnSale.findIndex(item => item._id.toString() === req.body.itemId)
+    if (productIndex !== -1) {
+      business.productsOnSale[productIndex].count = req.body.count
+    } else {
+      business.productsOnSale.push({ _id: req.body.itemId, count: req.body.count })
+    }
+    const updatedBusiness = await business.save()
+    await updatedBusiness.populate({
+      path: 'productsOnSale.products',
+      model: 'Product'
     })
 
-    
+    res.json(updatedBusiness)
   } catch (err) {
     console.log(err)
     res.status(500).json(err)
