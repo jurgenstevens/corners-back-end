@@ -95,16 +95,14 @@ async function create(req, res) {
 
 async function deleteBusiness(req, res) {
   try {
-    Business.findById(req.params.id)
-    .then(business => {
-      if (business.businessOwnerName._id.equals(req.user.profile)) {
-        Business.findByIdAndDelete(business._id)
-        .then(deletedBusiness => {
-          res.json(deletedBusiness)
-          console.log("this was deleted:", deletedBusiness)
-        })
-      }
-    })
+
+    const business = await Business.findById(req.params.id)
+    // commented out until we have a way to sign in properly
+    // if (business.businessOwnerName._id.equals(req.user.profile)) {
+      const deletedBusiness = await  Business.findByIdAndDelete(req.params.id)
+      res.json(deletedBusiness)
+      console.log("this business was deleted: ", deleteBusiness)
+    // }
   } catch (err) {
     console.log(err)
     res.status(500).json(err)
