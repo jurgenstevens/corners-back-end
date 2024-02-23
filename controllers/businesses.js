@@ -15,7 +15,7 @@ async function index(req, res) {
 
 async function show(req, res) {
   try{
-    Business.findById(req.params.id)
+    const business = await Business.findById(req.params.id)
     .populate([
       {
         path: "businessOwnerName",
@@ -30,9 +30,8 @@ async function show(req, res) {
         }
       },
     ])
-    .then(business => 
-      res.json(business)
-    )
+    
+    res.json(business)
   } catch (err) {
     console.log(err)
     res.status(500).json(err)
