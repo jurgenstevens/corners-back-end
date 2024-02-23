@@ -4,10 +4,8 @@ import { Product } from "../models/product.js";
 
 async function index(req, res) {
   try{
-    Business.find({})
-    .then(stores => 
-    res.json(stores)  
-    )
+    const stores = await Business.find({})
+    res.json(stores)
   } catch (err) {
     console.log(err)
     res.status(500).json(err)
