@@ -41,15 +41,15 @@ async function show(req, res) {
 
 async function edit(req, res) {
   try{
-    Business.findById(req.params.id)
-    .then(business => {
-      if (business.businessOwnerName._id.equals(req.user.profile)) {
-        Business.findByIdAndUpdate(req.params.id, req.body, {new: true})
-        .then(updatedBusiness => {
-          res.json(updatedBusiness)
-        })
-      }
-    })
+    const business = Business.findById(req.params.id)
+    if (business.businessOwnerName._id.equals(req.user.profile)) {
+      const updatedBusiness = await Business.findByIdAndUpdate(
+        req.params.id,
+        req.body,
+        { new : true }
+      )
+      res.status(200).json(updatedBusiness)
+    }
   } catch {
     console.log(err)
     res.status(500).json(err)
@@ -96,7 +96,7 @@ async function create(req, res) {
 async function deleteBusiness(req, res) {
   try {
 
-    const business = await Business.findById(req.params.id)
+    // const business = await Business.findById(req.params.id)
     // commented out until we have a way to sign in properly
     // if (business.businessOwnerName._id.equals(req.user.profile)) {
       const deletedBusiness = await  Business.findByIdAndDelete(req.params.id)
