@@ -24,7 +24,17 @@ async function create(req, res) {
   }
 }
 
+async function deleteProduct(req, res){
+  try{
+    const deletedProduct = await Product.findByIdAndDelete(req.params.id)
+    res.json(deletedProduct)
+    console.log("this product was deleted:" deletedProduct.productName)
 
+  } catch(err) {
+    console.log(err)
+    res.status(500).json(err)
+  }
+}
 
 export {
   index,
