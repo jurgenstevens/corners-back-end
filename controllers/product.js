@@ -13,6 +13,8 @@ async function index(req, res) {
 }
 
 async function create(req, res) {
+  // no auth yet until we figure out what twe will do with products and admins'
+
   try{
     const product = await Product.create(req.body)
     
@@ -25,6 +27,7 @@ async function create(req, res) {
 }
 
 async function deleteProduct(req, res){
+  // no auth yet until we figure out what twe will do with products and admins'
   try{
     const deletedProduct = await Product.findByIdAndDelete(req.params.id)
     res.json(deletedProduct)
