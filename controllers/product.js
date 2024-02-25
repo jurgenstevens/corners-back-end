@@ -15,10 +15,9 @@ async function index(req, res) {
 
 async function create(req, res) {
   try{
-    Product.create(req.body)
-    .then(product => [
-      res.json(product)
-    ])
+    const product = await Product.create(req.body)
+    
+    res.json(product)
     
   } catch(err) {
     console.log(err)

@@ -49,6 +49,8 @@ async function edit(req, res) {
         { new : true }
       )
       res.status(200).json(updatedBusiness)
+    } else {
+      res.status(401).json(err)
     }
   } catch {
     console.log(err)
