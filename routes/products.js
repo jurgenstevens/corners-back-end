@@ -8,6 +8,7 @@ router.use(decodeUserFromToken)
 
 router.get("/", productsCtrl.index)
 router.post("/create-new", productsCtrl.create)
+router.delete("/delete/:id", productsCtrl.delete)
 
 
 export { router }
