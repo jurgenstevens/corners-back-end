@@ -29,7 +29,7 @@ const businessSchema = new Schema({
   productsPendingApproval: [{type: Schema.Types.ObjectId, ref: 'Product' }], 
   recentlyAddedProducts: [{type: Schema.Types.ObjectId, ref: 'Product' }], 
   rejectedProducts: [{type: Schema.Types.ObjectId, ref: 'Product' }], 
-  productsOnSale: [{type: Schema.Types.ObjectId, ref: 'Product' }], 
+  productsOnSale: [{ products: {type: Schema.Types.ObjectId, ref: 'Product' }, count: Number}], 
   }, {
     timestamps: true,
 })

@@ -13,11 +13,11 @@ const productSchema = new Schema({
   },
   requestCount: {
     type: String,
-    required: true
+    required: false
   },
   outOfStock: {
     type: Boolean,
-    required: true
+    required: false
   }
 })
 
