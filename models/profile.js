@@ -23,7 +23,7 @@ const profileSchema = new Schema({
     { type: Schema.Types.ObjectId, ref: 'Business' }
   ],
   productWishlist: [
-    { type: Schema.Types.ObjectId, ref:'Products' }
+    { type: Schema.Types.ObjectId, ref:'Product' }
   ],
   rating: {
     type: Number,
