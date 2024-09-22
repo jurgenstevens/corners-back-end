@@ -12,7 +12,8 @@ const profileSchema = new Schema({
     required: true
   },
   authorizationLevel: {
-    type: String,
+    type: Number,
+    default: 100,
     required: true
   },
   zipCode: {
