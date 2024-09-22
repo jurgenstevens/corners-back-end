@@ -71,6 +71,9 @@ const productSchema = new Schema({
     type: String,
     required: true
   },
+  outOfStock: {
+    type: boolean
+  },
   reviews: [commentSchema],
   }, {
   timestamps: true
