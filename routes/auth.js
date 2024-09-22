@@ -5,7 +5,8 @@ import * as authCtrl from '../controllers/auth.js'
 const router = Router()
 
 /*---------- Public Routes ----------*/
-router.post('/signup', authCtrl.signup)
+router.post('/patron-signup', authCtrl.patronSignUp)
+router.post('/store-owner-signup', authCtrl.storeOwnerSignUp)
 router.post('/login', authCtrl.login)
 
 /*---------- Protected Routes ----------*/
