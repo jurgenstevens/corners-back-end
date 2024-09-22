@@ -7,31 +7,51 @@ const businessSchema = new Schema({
     type: String,
     required: true
   },
-  businessOwnerName: { type: Schema.Types.ObjectId, ref: 'Profile' },
-  storePhoneNumber: {
+  businessOwnerName: {
+    type: Schema.Types.ObjectId, ref: 'Profile',
+    required: true
+  },
+  businessPhoneNumber: {
     type: String,
     required: true
   },
-  storeEmail: {
+  businessEmail: {
     type: String,
     required: true
-  }, 
-  storeAddress: {
+  },
+  businessAddress: String,
+  businessCity: String,
+  businessState: String,
+  businessZipCode: Number,
+  daysOfWeekOpen: [{
     type: String,
-    required: true
-  }, 
-  storeZipcode: {
+    enum: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+  }],
+  businessHours: String,
+  authorizationLevel: {
     type: Number,
-    required: true
-  }, 
-  patrons: [{type: Schema.Types.ObjectId, ref: 'Profile' }], 
-  customerProductOptions: [{type: Schema.Types.ObjectId, ref: 'Product' }], 
-  productsPendingApproval: [{type: Schema.Types.ObjectId, ref: 'Product' }], 
-  recentlyAddedProducts: [{type: Schema.Types.ObjectId, ref: 'Product' }], 
-  rejectedProducts: [{type: Schema.Types.ObjectId, ref: 'Product' }], 
-  productsOnSale: [{ products: {type: Schema.Types.ObjectId, ref: 'Product' }, count: Number}], 
-  }, {
-    timestamps: true,
+    default: 200
+  },
+  patronsPending: [{
+    type: Schema.Types.ObjectId, ref: 'Profile'
+  }],
+  patrons: [{
+    type: Schema.Types.ObjectId, ref: 'Profile'
+  }],
+  products: [{
+    type: Schema.Types.ObjectId, ref: 'Product'
+  }],
+  productsRequested: [{
+    type: Schema.Types.ObjectId, ref: 'Product'
+  }],
+  productsOnSale: [{
+    type: Schema.Types.ObjectId, ref: 'Product'
+  }],
+  rejectedProducts: [{
+    type: Schema.Types.ObjectId, ref: 'Product'
+  }],
+}, {
+  timestamps: true
 })
 
 const Business = mongoose.model('Business', businessSchema)
