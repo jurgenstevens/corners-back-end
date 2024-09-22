@@ -72,7 +72,12 @@ const productSchema = new Schema({
     required: true
   },
   outOfStock: {
-    type: boolean
+    type: Boolean,
+    required: true
+  },
+  productApproved: {
+    type: Boolean,
+    required: true
   },
   reviews: [commentSchema],
   }, {
