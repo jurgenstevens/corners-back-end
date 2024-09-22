@@ -3,7 +3,7 @@ import mongoose from 'mongoose'
 const Schema = mongoose.Schema
 
 const profileSchema = new Schema({
-  fullName:{
+  name:{
     type: String,
     required: true
   },
@@ -12,11 +12,13 @@ const profileSchema = new Schema({
     required: true
   },
   authorizationLevel: {
-    type: String,
-    required: true
+    type: Number,
+    required: true,
+    enum: [100, 200],
+    default: 100
   },
   zipCode: {
-    type: String,
+    type: Number,
     required: true
   },
   myStores: [
@@ -24,11 +26,7 @@ const profileSchema = new Schema({
   ],
   productWishlist: [
     { type: Schema.Types.ObjectId, ref:'Products' }
-  ],
-  rating: {
-    type: Number,
-    required: false
-  }
+  ]
 },{
   timestamps: true,
 })

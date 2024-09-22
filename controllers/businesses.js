@@ -20,7 +20,7 @@ async function show(req, res) {
       {
         path: "businessOwnerName",
         populate: {
-          path: "fullName"
+          path: "name"
         }
       },{
         path: "productsOnSale",
