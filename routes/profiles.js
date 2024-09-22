@@ -15,6 +15,11 @@ router.use(decodeUserFromToken)
 router.get('/', checkAuth, profilesCtrl.index)
 router.post('/admin/approve-store-owner/:id', checkAuth, profilesCtrl.approveStore)
 
+// Business Routes
+
+
+// Patron Routes
+
 router.put('/:id/add-photo', checkAuth, profilesCtrl.addPhoto)
 
 export { router }
