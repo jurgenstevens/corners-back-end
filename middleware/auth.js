@@ -21,7 +21,46 @@ function checkAuth(req, res, next) {
 }
 
 function checkAdmin(req, res, next) {
-
+  if (req.user && req.user.profile.authorizationLevel === 101) {
+    return next()
+  } else {
+    return res.status(403).json({ err: 'Forbidden: Admins only' })
+  }
 }
 
-export { decodeUserFromToken, checkAuth, checkAdmin }
+function checkStoreOwner(req, res, next) {
+  if (req.user && req.user.profile.authorizationLevel >= 200 && req.user.profile.authorizationLevel <= 299) {
+    return next()
+  } else {
+    return res.status(403).json({ err: 'Forbidden: Store Owners only' })
+  }
+}
+
+function checkPatron(req, res, next) {
+  if (req.user && req.user.profile.authorizationLevel < 200) {
+    return next()
+  } else {
+    return res.status(403).json({ err: 'Forbidden: Patrons only' })
+  }
+}
+
+function checkAdminOrStoreOwner(req, res, next) {
+  if (req.user && (req.user.profile.authorizationLevel === 101 || 
+                   (req.user.profile.authorizationLevel >= 200 && req.user.profile.authorizationLevel <= 299))) {
+    return next()
+  } else {
+    return res.status(403).json({ err: 'Forbidden: Admins or Store Owners only' })
+  }
+}
+
+function checkAdminOrPatron(req, res, next) {
+  if (req.user && (req.user.profile.authorizationLevel === 101 || 
+                   req.user.profile.authorizationLevel < 200)) {
+    return next()
+  } else {
+    return res.status(403).json({ err: 'Forbidden: Admins or Patrons only' })
+  }
+}
+
+
+export { decodeUserFromToken, checkAuth, checkAdmin, checkStoreOwner, checkPatron, checkAdminOrStoreOwner, checkAdminOrPatron }
