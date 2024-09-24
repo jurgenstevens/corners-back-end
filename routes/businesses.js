@@ -12,6 +12,9 @@ router.get('/', checkAuth, checkAdminOrStoreOwner, businessCtrl.index)
 // GET localhost:3000/businesses/:businessId (Show specific business details - Store Owners & Admins)
 router.get('/:businessId', checkAuth, checkAdminOrStoreOwner, businessCtrl.show)
 
+// POST localhost:3000/businesses (Only Admin can create new businesses)
+router.post('/', checkAuth, checkAdmin, businessCtrl.create)
+
 // GET localhost:3000/businesses/:businessId/edit (Store Owners can edit their business or Admin can edit)
 router.get('/:businessId/edit', checkAuth, checkAdminOrStoreOwner, businessCtrl.edit)
 
@@ -30,6 +33,7 @@ router.put('/:businessId/update-business-profile', checkAuth, checkStoreOwner, b
 // DELETE localhost:3000/businesses/:businessId (Only Admin can delete a business)
 router.delete('/:businessId', checkAuth, checkAdmin, businessCtrl.delete)
 
+// SOME OF THESE ROUTES BELONG IN THE PRODUCTS ROUTES FILE
 // router.get("/", businessCtrl.index)
 // router.get("/:id", businessCtrl.show)
 // router.post("/register", checkAuth, businessCtrl.create)
@@ -38,19 +42,5 @@ router.delete('/:businessId', checkAuth, checkAdmin, businessCtrl.delete)
 // router.put("/add-product/:id", checkAuth, businessCtrl.addProduct)
 // router.put("/delete-all/:id", checkAuth, businessCtrl.clearProducts)
 // router.put("/edit-stock/:id", checkAuth, businessCtrl.editStock)
-
-
-export { router }
-
-
-// router.get("/", businessCtrl.index)
-// router.get("/:id", businessCtrl.show)
-// router.post("/register", checkAuth, businessCtrl.create)
-// router.put("/edit/:id", checkAuth, businessCtrl.edit)
-// router.delete("/:id", checkAuth, businessCtrl.delete)
-// router.put("/add-product/:id", checkAuth, businessCtrl.addProduct)
-// router.put("/delete-all/:id", checkAuth, businessCtrl.clearProducts)
-// router.put("/edit-stock/:id", checkAuth, businessCtrl.editStock)
-
 
 export { router }
