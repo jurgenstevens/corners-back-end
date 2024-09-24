@@ -1,205 +1,203 @@
-import { Business } from "../models/business.js";
-import { Product } from "../models/product.js";
+import { Business } from "../models/business.js"
+import { Profile } from "../models/profile.js"
 
-
+// Fetch businesses for the current user (Store Owners & Admins)
 async function index(req, res) {
-  try{
-    const stores = await Business.find({})
-    res.json(stores)
-  } catch (err) {
-    console.log(err)
-    res.status(500).json(err)
-  }
-}
-
-
-async function show(req, res) {
-  try{
-    const business = await Business.findById(req.params.id)
-    .populate([
-      {
-        path: "businessOwnerName",
-        populate: {
-          path: "fullName"
-        }
-      },{
-        path: "productsOnSale",
-        populate: {
-          path:"_id",
-          model: "Product"
-        }
-      },
-    ])
+  try {
+    const profile = await Profile.findById(req.user.profile._id).populate('myStores')
     
-    res.json(business)
-  } catch (err) {
-    console.log(err)
-    res.status(500).json(err)
-  }
-}
-
-
-async function edit(req, res) {
-  try{
-    const business = Business.findById(req.params.id)
-    if (business.businessOwnerName._id.equals(req.user.profile)) {
-      const updatedBusiness = await Business.findByIdAndUpdate(
-        req.params.id,
-        req.body,
-        { new : true }
-      )
-      res.status(200).json(updatedBusiness)
-    } else {
-      res.status(401).json(err)
+    if (!profile) {
+      return res.status(404).json({ message: "Profile not found" })
     }
-  } catch {
-    console.log(err)
-    res.status(500).json(err)
-  }
-}
 
-async function create(req, res) {
-  try{
-    //Skipping auth for now just want the functionality to work
-    // console.log(req.user)
-    req.body.businessOwnerName = req.user.profile
-    Business.create(req.body)
-    .then(business => {
-      Business.findById(business._id)
-      .populate([
-        {
-          path: "patrons"
-        }
-        // commented out temporarly until needed
-        //,{
-        //   path: "customerProductOptions"
-        // },{
-        //   path: "productsPendingApproval"
-        // },{
-        //   path: "recentlyAddedProducts"
-        // },{
-        //   path: "rejectedProducts"
-        // }
-        ,{
-          path: "productsOnSale"
-        }
-      ])
-      .then(popBusiness => {
-        // console.log(popBusiness)
-        res.json(popBusiness)
+    if (profile.authorizationLevel >= 200) {
+      // If the user is a Store Owner or Admin, fetch their businesses
+      return res.status(200).json({
+        message: "Businesses fetched successfully",
+        businesses: profile.myStores,
       })
-    })
-  } catch (err) {
-    console.log(err)
-    res.status(500).json(err)
+    } else {
+      return res.status(403).json({ message: "Unauthorized to view businesses" })
+    }
+  } catch (error) {
+    return res.status(500).json({ error: error.message })
   }
 }
 
+// Admin can create a new business/store
+async function create(req, res) {
+  try {
+    const profile = await Profile.findById(req.user.profile._id)
+
+    if (profile.authorizationLevel !== 101) { // Check if user is Admin
+      return res.status(403).json({
+        message: "Only Admins can create new businesses",
+      })
+    }
+
+    // Set the owner as the admin creating the business
+    req.body.owner = profile._id
+    req.body.authorizationLevel = 200 // Store Owner level for the created business
+
+    const business = await Business.create(req.body)
+    profile.myStores.push(business)
+    await profile.save()
+
+    return res.status(201).json({
+      message: "Business created successfully",
+      business,
+    })
+  } catch (error) {
+    return res.status(500).json({ error: error.message })
+  }
+}
+
+// Show specific business details (Store Owners & Admins)
+async function show(req, res) {
+  try {
+    const business = await Business.findById(req.params.businessId)
+    if (!business) {
+      return res.status(404).json({ message: "Business not found" })
+    }
+    return res.status(200).json({
+      message: "Business details fetched successfully",
+      business,
+    })
+  } catch (error) {
+    return res.status(500).json({ error: error.message })
+  }
+}
+
+// Store Owner or Admin can edit a business
+async function edit(req, res) {
+  try {
+    const business = await Business.findById(req.params.businessId)
+    if (!business) {
+      return res.status(404).json({ message: "Business not found" })
+    }
+    return res.status(200).json({
+      message: "Business fetched for editing",
+      business,
+      daysEnum: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+    })
+  } catch (error) {
+    return res.status(500).json({ error: error.message })
+  }
+}
+
+// Admin can approve a business
+async function approveBusiness(req, res) {
+  try {
+    if (req.user.profile.authorizationLevel !== 101) {
+      return res.status(403).json({ message: "Only Admins can approve businesses" })
+    }
+    const business = await Business.findById(req.params.businessId).populate("owner")
+    if (!business) {
+      return res.status(404).json({ message: "Business not found" })
+    }
+    const profile = await Profile.findById(business.owner._id)
+    profile.authorizationLevel = 201
+    await profile.save()
+    business.authorizationLevel = 201
+    await business.save()
+    return res.status(200).json({
+      message: "Business approved successfully",
+      business,
+      profile,
+    })
+  } catch (error) {
+    return res.status(500).json({ error: error.message })
+  }
+}
+
+// Admin can deny a business
+async function denyBusiness(req, res) {
+  try {
+    if (req.user.profile.authorizationLevel !== 101) {
+      return res.status(403).json({ message: "Only Admins can deny businesses" })
+    }
+    const business = await Business.findById(req.params.businessId).populate("owner")
+    if (!business) {
+      return res.status(404).json({ message: "Business not found" })
+    }
+    const profile = await Profile.findById(business.owner._id)
+    profile.authorizationLevel = 299
+    await profile.save()
+    business.authorizationLevel = 299
+    await business.save()
+    return res.status(200).json({
+      message: "Business denied successfully",
+      business,
+      profile,
+    })
+  } catch (error) {
+    return res.status(500).json({ error: error.message })
+  }
+}
+
+// Admin can update business account details
+async function updateBusinessAccount(req, res) {
+  try {
+    if (req.user.profile.authorizationLevel !== 101) {
+      return res.status(403).json({ message: "Only Admins can update business account details" })
+    }
+    const business = await Business.findByIdAndUpdate(req.params.businessId, req.body, { new: true })
+    if (!business) {
+      return res.status(404).json({ message: "Business not found" })
+    }
+    return res.status(200).json({
+      message: "Business account details updated successfully",
+      business,
+    })
+  } catch (error) {
+    return res.status(500).json({ error: error.message })
+  }
+}
+
+// Store Owners can update their business profile
+async function updateBusinessProfile(req, res) {
+  try {
+    if (req.user.profile.authorizationLevel !== 201) {
+      return res.status(403).json({ message: "Only Store Owners can update their business profile" })
+    }
+    const business = await Business.findByIdAndUpdate(req.params.businessId, req.body, { new: true })
+    if (!business) {
+      return res.status(404).json({ message: "Business not found" })
+    }
+    return res.status(200).json({
+      message: "Business profile updated successfully",
+      business,
+    })
+  } catch (error) {
+    return res.status(500).json({ error: error.message })
+  }
+}
+
+// Admin can delete a business
 async function deleteBusiness(req, res) {
   try {
-
-    // const business = await Business.findById(req.params.id)
-    // commented out until we have a way to sign in properly
-    // if (business.businessOwnerName._id.equals(req.user.profile)) {
-      const deletedBusiness = await  Business.findByIdAndDelete(req.params.id)
-      res.json(deletedBusiness)
-      console.log("this business was deleted: ", deleteBusiness)
-    // }
-  } catch (err) {
-    console.log(err)
-    res.status(500).json(err)
-  }
-}
-
-async function addProduct(req, res) {
-  try{
-    const business = await Business.findById(req.params.id)
-    const product = await Product.findById(req.body)
-    console.log(product)
-
-    if (!business || !product) {
-      return res.status(404).json({ message: 'Not found' })
+    if (req.user.profile.authorizationLevel !== 101) {
+      return res.status(403).json({ message: "Only Admins can delete businesses" })
     }
-
-    business.productsOnSale.push(product)
-    console.log(business)
-    Business.findByIdAndUpdate(req.params.id, business, {new: true})
-    .then(updatedBusiness => {
-      updatedBusiness.populate([
-        {
-          path: "productsOnSale"
-        },{
-          path: "productsOnSale",
-          populate : {
-            path: "products",
-            populate: {
-              path: "productName"
-            }
-          }
-        }
-      ])
-      .then(popBusiness => {
-        res.json(popBusiness)
-      })
-    })
-  } catch (err) {
-    console.log(err)
-    res.status(500).json(err)
-  }
-}
-
-async function clearProducts(req, res) {
-  try{
-    const business = await Business.findById(req.params.id)
-
-    business.productsOnSale = []
-
-    Business.findByIdAndUpdate(req.params.id, business, {new: true})
-    .then(updatedBusiness => {
-      res.json(updatedBusiness)
-    })
-  } catch (err) {
-    console.log(err)
-    res.status(500).json(err)
-  } 
-}
-
-async function editStock(req, res) {
-  try{
-    const business = await Business.findById(req.params.id)
+    const business = await Business.findById(req.params.businessId)
     if (!business) {
-      return res.status(404).json({ message: 'Business not found' })
+      return res.status(404).json({ message: "Business not found" })
     }
-    const product = await Product.findByIdAndUpdate(req.body.itemId, { count: req.body.count }, { new: true })
-    if (!product) {
-      return res.status(404).json({ message: 'Product not found' })
-    }
-    const productIndex = business.productsOnSale.findIndex(item => item._id.toString() === req.body.itemId)
-    if (productIndex !== -1) {
-      business.productsOnSale[productIndex].count = req.body.count
-    } else {
-      business.productsOnSale.push({ _id: req.body.itemId, count: req.body.count })
-    }
-    const updatedBusiness = await business.save()
-    await updatedBusiness.populate({
-      path: 'productsOnSale.products',
-      model: 'Product'
-    })
-
-    res.json(updatedBusiness)
-  } catch (err) {
-    console.log(err)
-    res.status(500).json(err)
-  } 
+    await business.deleteOne()
+    return res.status(200).json({ message: "Business deleted successfully" })
+  } catch (error) {
+    return res.status(500).json({ error: error.message })
+  }
 }
 
-export { 
+export {
+  index,
   create,
   show,
-  index,
   edit,
+  approveBusiness,
+  denyBusiness,
+  updateBusinessAccount,
+  updateBusinessProfile,
   deleteBusiness as delete,
-  addProduct,
-  clearProducts,
-  editStock
-  }
+}
